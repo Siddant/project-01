@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const alienRow = 5
 
   let playerIndex, previousIndex, timerId, shootingIndex, div
+  let arr = []
 
 
   //CREATE DIVS AND ADD DIVS
@@ -67,7 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
   class Alien{
     constructor(alienIndex) {
       this.alienIndex = alienIndex
+      this.modify = 2
     }
+    addIndex(){
+      this.alienIndex *= this.modify
+    }
+
   }
 
 
@@ -83,10 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
         startPosition++
       }
       const aliens = new Alien(startPosition)
+      console.log(aliens)
       div[aliens.alienIndex].classList.add(className)
+      arr.push(aliens)
     }
   }
 
+  //CREATES A BULLET OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
   function shoot(playerIndex,classname){
     shootingIndex = playerIndex
     let playerShoot = new Shooting(shootingIndex,width,0)
@@ -95,13 +104,30 @@ document.addEventListener('DOMContentLoaded', () => {
       if(playerShoot.shottingIndex<0){
         clearInterval(playerShoot.shootingTimerId)
         div[playerShoot.shottingIndex+width].classList.remove(classname)
-        playerShoot = null
+        playerShoot = undefined
       }else{
-        if((playerShoot.shottingIndex+width)!==playerIndex)div[playerShoot.shottingIndex+width].classList.remove(classname)
+        if((playerShoot.shottingIndex+width)!==playerIndex)div[playerShoot.shottingIndex+width]
+          .classList.remove(classname)
         div[playerShoot.shottingIndex].classList.add(classname)
       }
-    }, 150)
+      if(playerShoot)checkHit(playerShoot.shottingIndex, classname, playerShoot.shootingTimerId)
+
+    }, 100)
     if(playerShoot.shootingTimerId===0)playerShoot.shootingTimerId = timerId
+  }
+
+
+  //collision dection  to check if the users hit the alien
+  function checkHit(playerShoot, className, timerId){
+    arr.forEach(elem =>{
+      if(!!elem.alienIndex && elem.alienIndex === playerShoot){
+        clearInterval(timerId)
+        div[playerShoot].classList.remove(className)
+        div[playerShoot].classList.remove('alien')
+        elem = undefined
+      }
+    })
+    arr = arr.filter(elem => elem.alienIndex !== playerShoot)
   }
 
 
@@ -111,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addElement()
     }
     div = document.querySelectorAll('.grid div')
+    document.addEventListener('keydown', handleKeydown)
     alienCreate(3,'alien')
     playerIndex = (div.length-1)-(width/2)
     div[playerIndex].classList.add('player')
@@ -118,5 +145,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   init()
-  document.addEventListener('keydown', handleKeydown)
 })
