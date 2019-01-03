@@ -31,5 +31,8 @@ body {
   height: 5%;
   width: 5%;
   border: 1px solid red;
+}
 
+.grid div.player {
+  background-color: #ccc;
 }
