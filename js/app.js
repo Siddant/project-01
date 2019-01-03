@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleKeydown(e){
     previousIndex = playerIndex
-    if(e.keyCode === 37){
+    if(e.keyCode === 37 && playerIndex>(div.length-width)){
       playerIndex--
       movePlayer(playerIndex, previousIndex)
-    }else if (e.keyCode === 39){
+    }else if (e.keyCode === 39&& playerIndex<(div.length-1)){
       playerIndex++
       movePlayer(playerIndex, previousIndex)
     }
