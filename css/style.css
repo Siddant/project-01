@@ -34,5 +34,15 @@ body {
 }
 
 .grid div.player {
-  background-color: #ccc;
+  background-color: green;
+}
+
+
+.grid div.shooting {
+  background-color: black;
+}
+
+
+.grid div.alien {
+  background-color: blue;
 }
