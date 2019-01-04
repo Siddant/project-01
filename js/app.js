@@ -94,6 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!playerShoot){
         shoot(playerIndex, 'shooting')
       }
+      // arr.forEach(elem =>{
+      //   moveAlien(elem)
+      // })
+      console.log(arr)
     }
   }
 
@@ -119,9 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if(playerShoot)checkHit(playerShoot.shottingIndex, classname, playerShoot.shootingTimerId)
     }, 60)
-    arr.forEach(elem =>{
-      moveAlien(elem)
-    })
     if(playerShoot.shootingTimerId===0)playerShoot.shootingTimerId = timerId
   }
 
@@ -151,20 +152,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function moveAlien(elem){
     previousIndex = elem.alienIndex
     checkAlienindex(elem)
-    if(goDown && elem.goDown){
+    if(elem.goDown){
       elem.moveDown()
     }else if(elem.movePoistion === 'left'){
       elem.moveLeft()
     }else{
       elem.moveRight()
     }
-    div[previousIndex].classList.remove('alien')
+    //div[previousIndex].classList.remove('alien')
     div[elem.alienIndex].classList.add('alien')
+    //if(div[previousIndex].classList === 'alien')
   }
 
   function checkAlienindex(elem){
-    if (goDown && elem.goDown){
-      goDown = false
+    if (elem.goDown){
+      //goDown = false
       elem.goDown = false
       if(elem.movePoistion === 'left'){
         elem.movePoistion = 'right'
@@ -172,9 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
         elem.movePoistion = 'left'
       }
     }else if (((elem.alienIndex+1)%20===0) || ((elem.alienIndex)%20===0)) {
-      goDown = true
+      //goDown = true
       elem.goDown = true
     }
+  }
+
+  function displayAlienmove(){
+    div.forEach(divs => {
+      if(divs.classList.value === 'alien'){
+        divs.classList.remove('alien')
+        console.log('here')
+      }
+
+    })
+    arr.forEach(alien => {
+      div[alien.alienIndex].classList.add('alien')
+    })
   }
 
   //collision dection  to check if the users hit the alien
@@ -197,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameTimerId =  setInterval(()=> {
       arr.forEach(elem =>{
         moveAlien(elem)
+        displayAlienmove()
       })
     }, delay)
   }
