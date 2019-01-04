@@ -4,39 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const grid = document.querySelector('.grid')
   const alien = 11
   const alienRow = 5
+  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0
 
-  let playerIndex, previousIndex, timerId, shootingIndex, div
+  //used to store the alien object and can be used in a global aspect
   let arr = []
 
-
-  //CREATE DIVS AND ADD DIVS
-  function addElement () {
-    const newDiv = document.createElement('div')
-    grid.appendChild(newDiv)
-  }
-
-
-  //HANDLE PLAYER EVENTS
-  function handleKeydown(e){
-    previousIndex = playerIndex
-    if(e.keyCode === 37 && playerIndex>(div.length-width)){
-      playerIndex--
-      movePlayer(playerIndex, previousIndex)
-    }else if (e.keyCode === 39 && playerIndex<(div.length-1)){
-      playerIndex++
-      movePlayer(playerIndex, previousIndex)
-    }else if (e.keyCode === 32){
-      shoot(playerIndex, 'shooting')
-    }
-  }
-
-  //ADD AND REMOVE PLAYER DIRECTION
-  function movePlayer(playerIndex, previousIndex){
-    div[previousIndex].classList.remove('player')
-    div[playerIndex].classList.add('player')
-  }
-
-
+  //class
 
   class Shooting {
     constructor(playeIndex, width, timerId) {
@@ -66,32 +39,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   class Alien{
-    constructor(alienIndex) {
+    constructor(alienIndex, points) {
       this.alienIndex = alienIndex
+      this.points = points
       this.modify = 2
     }
     addIndex(){
       this.alienIndex *= this.modify
     }
-
   }
 
+
+  //CREATE DIVS AND ADD DIVS
+  function addElement () {
+    const newDiv = document.createElement('div')
+    grid.appendChild(newDiv)
+  }
+
+
+  //HANDLE PLAYER EVENTS
+  function handleKeydown(e){
+    previousIndex = playerIndex
+    if(e.keyCode === 37 && playerIndex>(div.length-width)){
+      playerIndex--
+      movePlayer(playerIndex, previousIndex)
+    }else if (e.keyCode === 39 && playerIndex<(div.length-1)){
+      playerIndex++
+      movePlayer(playerIndex, previousIndex)
+    }else if (e.keyCode === 32){
+      shoot(playerIndex, 'shooting')
+    }
+  }
+
+  //ADD AND REMOVE PLAYER DIRECTION
+  function movePlayer(playerIndex, previousIndex){
+    div[previousIndex].classList.remove('player')
+    div[playerIndex].classList.add('player')
+  }
 
   //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
   function alienCreate(index, className){
     let startPosition = index
     let endPosiition = startPosition+alien
+    let points = 30
     for(let i = 0; i<alien*alienRow; i++) {
+
+
       if(startPosition === endPosiition){
         endPosiition+=width
         startPosition= (startPosition-10)+20
+
       }else{
         startPosition++
       }
-      const aliens = new Alien(startPosition)
-      console.log(aliens)
+      if(startPosition === (index+20+1) ||startPosition === (index+60+1) ){
+        points -= 10
+      }
+      const aliens = new Alien(startPosition , points)
       div[aliens.alienIndex].classList.add(className)
       arr.push(aliens)
+      console.log(aliens)
     }
   }
 
@@ -124,7 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timerId)
         div[playerShoot].classList.remove(className)
         div[playerShoot].classList.remove('alien')
+        score += elem.points
         elem = undefined
+        console.log(score)
       }
     })
     arr = arr.filter(elem => elem.alienIndex !== playerShoot)
@@ -138,11 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     div = document.querySelectorAll('.grid div')
     document.addEventListener('keydown', handleKeydown)
-    alienCreate(3,'alien')
+    alienCreate(23,'alien')
     playerIndex = (div.length-1)-(width/2)
     div[playerIndex].classList.add('player')
   }
-
 
   init()
 })
