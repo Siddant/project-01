@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const grid = document.querySelector('.grid')
   const alien = 11
   const alienRow = 5
-  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0, playerShoot, gameTimerId, goDown
+  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0, playerShoot, gameTimerId, move = 'left'
+
+  let changePosition =false
 
   //used to store the alien object and can be used in a global aspect
   let arr = []
@@ -73,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+
   //CREATE DIVS AND ADD DIVS
   function addElement() {
     const newDiv = document.createElement('div')
@@ -94,11 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!playerShoot){
         shoot(playerIndex, 'shooting')
       }
-      // arr.forEach(elem =>{
-      //   moveAlien(elem)
-      // })
-      console.log(arr)
     }
+
+
   }
 
   //ADD AND REMOVE PLAYER DIRECTION
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let endPosiition = startPosition+alien
     let points = 30
     //alien*alienRow
-    for(let i = 0; i<alien*1; i++) {
+    for(let i = 0; i<alien*alienRow; i++) {
       if(startPosition === endPosiition){
         endPosiition+=width
         startPosition= (startPosition-10)+20
@@ -149,48 +150,77 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   //move the alien
-  function moveAlien(elem){
-    previousIndex = elem.alienIndex
-    checkAlienindex(elem)
-    if(elem.goDown){
-      elem.moveDown()
-    }else if(elem.movePoistion === 'left'){
-      elem.moveLeft()
-    }else{
-      elem.moveRight()
-    }
-    //div[previousIndex].classList.remove('alien')
-    div[elem.alienIndex].classList.add('alien')
-    //if(div[previousIndex].classList === 'alien')
-  }
-
-  function checkAlienindex(elem){
-    if (elem.goDown){
-      //goDown = false
-      elem.goDown = false
-      if(elem.movePoistion === 'left'){
-        elem.movePoistion = 'right'
-      }else{
-        elem.movePoistion = 'left'
+  //move the alien index
+  function moveAlien(move){
+    arr.forEach(elem=>{
+      if(move === 'left'){
+        elem.moveLeft()
+      }else if(move=== 'right'){
+        elem.moveRight()
+      }  else{
+        elem.moveDown()
       }
-    }else if (((elem.alienIndex+1)%20===0) || ((elem.alienIndex)%20===0)) {
-      //goDown = true
-      elem.goDown = true
-    }
+    })
+
+
+
+    displayAlienmove()
   }
 
+  function checkAlienindex(){
+    arr.forEach(elem=>{
+      if((elem.alienIndex+1)%width === 0 || elem.alienIndex%width === 0){
+        changePosition = true
+      }
+    })
+
+  }
+
+
+
+
+  //paints the alien
   function displayAlienmove(){
+    //reomves the aliens
     div.forEach(divs => {
       if(divs.classList.value === 'alien'){
         divs.classList.remove('alien')
-        console.log('here')
       }
-
     })
+    //repaints the aliens
     arr.forEach(alien => {
       div[alien.alienIndex].classList.add('alien')
     })
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //collision dection  to check if the users hit the alien
   function checkHit(playerShootindx, className, timerId){
@@ -209,11 +239,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // start the timer
   function startTimer(delay){
-    gameTimerId =  setInterval(()=> {
-      arr.forEach(elem =>{
-        moveAlien(elem)
-        displayAlienmove()
-      })
+    gameTimerId = setInterval(()=> {
+
+      if(changePosition){
+        moveAlien('down')
+        if(move ==='left'){
+          move ='right'
+        }else{
+          move ='left'
+        }
+        changePosition = false
+      }else{
+        moveAlien(move)
+        checkAlienindex()
+      }
     }, delay)
   }
 
@@ -230,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     div[playerIndex].classList.add('player')
     startTimer(500)
   }
-
 
   init()
 })
