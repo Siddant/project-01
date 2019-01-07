@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     playerShoot, gameTimerId, move = 'right', changePosition =false,
     level = 1, delay = 500
 
-
   //used to store the alien object and can be used in a global aspect
   let arr = []
   //- Scoring and Lives
@@ -136,19 +135,20 @@ document.addEventListener('DOMContentLoaded', () => {
   //function to check weahther to end the game
   function checkEnd(){
     if(arr.length === 0 ){
-      endGame()
-      playerShoot = undefined
-      delay -= 50
+      //endGame()
+      //playerShoot = undefined
+      clearInterval(gameTimerId)
+      if(level<=7)delay -= 50
       level++
+      console.log(delay)
       document.addEventListener('keydown', handleKeydown)
       startGame()
     }else{
       arr.forEach((elem)=>{
         if(elem.alienIndex+1 > div.length-(width*2)){
           endGame()
-          h1.innerText = 'You Lose!! LOSER'
+          h1.innerText = 'Game Over'
           delay = 500
-
         }
       })
     }
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //paints the alien
   function displayAlienmove(){
-    //reomves the aliens
+    //removes the aliens
     div.forEach(divs => {
       if(divs.classList.value === 'alien'){
         divs.classList.remove('alien')
@@ -246,9 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addElement()
     }
     div = document.querySelectorAll('.grid div')
+    //caluclate the player position, which is the center of the bottom of the screen
     playerIndex = (div.length-1)-(width/2)
     document.addEventListener('keydown', handleKeydown)
-    //caluclate the player position, which is the center of the bottom of the screen
     startGame()
   }
 
