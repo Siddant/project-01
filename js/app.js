@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-  //const h1 = document.querySelector('h1')
-  const width = 20
+  const h1 = document.querySelector('h1')
+  const width = 20, delay = 500
   const grid = document.querySelector('.grid')
+  const userScore = document.querySelector('#score')
   const alien = 11
   const alienRow = 5
-  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0, playerShoot, gameTimerId, move = 'left'
+  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0, playerShoot, gameTimerId, move = 'right'
 
-  let changePosition =false
+  let changePosition =false,gameEnd = false
 
   //used to store the alien object and can be used in a global aspect
   let arr = []
@@ -16,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   //20 points - 3rd and 4rth row
   //30 points - 1st and 2nd row
   //50, 100, 300 or 500 points - Mystery ship
+  
   //class
-
   class Shooting {
     constructor(playeIndex, width, timerId) {
       this.shootingIndex = playeIndex
@@ -45,24 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   class Alien{
-    constructor(alienIndex, points, position) {
+    constructor(alienIndex, points) {
       this.alienIndex = alienIndex
       this.points = points
       this.width = 20
-      this.position = position
-      this.down = false
-    }
-    set movePoistion(position){
-      this.position = position
-    }
-    get movePoistion(){
-      return this.position
-    }
-    set goDown(down){
-      this.down = down
-    }
-    get goDown(){
-      return this.down
     }
     moveDown(){
       this.alienIndex += this.width
@@ -74,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
       this.alienIndex += 1
     }
   }
-
 
   //CREATE DIVS AND ADD DIVS
   function addElement() {
@@ -94,12 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
       movePlayer(playerIndex, previousIndex)
     }else if (e.keyCode === 32){
       //restrice users from spamming space to shoot all the time
-      if(!playerShoot){
+      if(!playerShoot && !gameEnd){
         shoot(playerIndex, 'shooting')
       }
     }
-
-
   }
 
   //ADD AND REMOVE PLAYER DIRECTION
@@ -123,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div[playerShoot.shottingIndex].classList.add(classname)
       }
       if(playerShoot)checkHit(playerShoot.shottingIndex, classname, playerShoot.shootingTimerId)
-    }, 60)
+    }, 40)
     if(playerShoot.shootingTimerId===0)playerShoot.shootingTimerId = timerId
   }
 
@@ -132,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let startPosition = index
     let endPosiition = startPosition+alien
     let points = 30
-    //alien*alienRow
     for(let i = 0; i<alien*alienRow; i++) {
       if(startPosition === endPosiition){
         endPosiition+=width
@@ -143,10 +126,36 @@ document.addEventListener('DOMContentLoaded', () => {
       if(startPosition === (index+20+1) || startPosition === (index+60+1) ){
         points -= 10
       }
-      const aliens = new Alien(startPosition , points, 'right')
+      const aliens = new Alien(startPosition , points)
       div[aliens.alienIndex].classList.add(className)
       arr.push(aliens)
     }
+  }
+
+
+  //function to check weahther to end the game
+  function checkEnd(){
+    if(arr.length === 0 ){
+      gameEnd =true
+      endGame()
+      h1.innerText = 'You Win'
+    }else{
+      arr.forEach((elem)=>{
+        if(elem.alienIndex+1 > div.length-(width*2)){
+          gameEnd =true
+          endGame()
+          h1.innerText = 'You Lose'
+        }
+      })
+    }
+  }
+
+  //ENDS THE GAME
+  function endGame(){
+    clearInterval(gameTimerId)
+    clearInterval(timerId)
+    document.removeEventListener('keydown', handleKeydown)     // Fails
+
   }
 
   //move the alien
@@ -161,9 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         elem.moveDown()
       }
     })
-
-
-
     displayAlienmove()
   }
 
@@ -173,11 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         changePosition = true
       }
     })
-
   }
-
-
-
 
   //paints the alien
   function displayAlienmove(){
@@ -193,35 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   //collision dection  to check if the users hit the alien
   function checkHit(playerShootindx, className, timerId){
     arr.forEach(elem =>{
@@ -230,17 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
         div[playerShootindx].classList.remove(className)
         div[playerShootindx].classList.remove('alien')
         score += elem.points
+        arr = arr.filter(elem => elem.alienIndex !== playerShootindx)
         elem = undefined
         playerShoot = undefined
+        userScore.innerText = score
       }
     })
-    arr = arr.filter(elem => elem.alienIndex !== playerShootindx)
   }
 
   // start the timer
-  function startTimer(delay){
+  function startTimer(){
     gameTimerId = setInterval(()=> {
-
       if(changePosition){
         moveAlien('down')
         if(move ==='left'){
@@ -253,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         moveAlien(move)
         checkAlienindex()
       }
+      checkEnd()
     }, delay)
   }
 
@@ -263,11 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     div = document.querySelectorAll('.grid div')
     document.addEventListener('keydown', handleKeydown)
-    alienCreate(23,'alien')
+    alienCreate(0,'alien')
     //caluclate the player position, which is the center of the bottom of the screen
     playerIndex = (div.length-1)-(width/2)
     div[playerIndex].classList.add('player')
-    startTimer(500)
+    startTimer()
   }
 
   init()
