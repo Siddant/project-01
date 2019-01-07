@@ -5,10 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const userScore = document.querySelector('#score')
   const userLevel = document.querySelector('#level')
   const alien = 11, alienRow = 5
-  let playerIndex, previousIndex, timerId, shootingIndex, div, score =0,
-    playerShoot, gameTimerId, move = 'right', changePosition =false,
+  let playerIndex, timerId, shootingIndex, div, score = 0,
+    laser, gameTimerId, move = 'right', changePosition =false,
     level = 1, delay = 500
-
   //used to store the alien object and can be used in a global aspect
   let arr = []
   //- Scoring and Lives
@@ -20,10 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //class
   class Shooting {
-    constructor(playeIndex, width, timerId) {
+    constructor(playeIndex, width, timerId,shooter, cssClass) {
       this.shootingIndex = playeIndex
       this.width  =  width
       this.timerId = timerId
+      this.shooter = shooter
+      this.class = cssClass
     }
     get shottingIndex() {
       return this.shootingIndex
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //HANDLE PLAYER EVENTS
   function handleKeydown(e){
-    previousIndex = playerIndex
+    const previousIndex = playerIndex
     if(e.keyCode === 37 && playerIndex>(div.length-width)){
       playerIndex--
       movePlayer(playerIndex, previousIndex)
@@ -79,9 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
       movePlayer(playerIndex, previousIndex)
     }else if (e.keyCode === 32){
       //restrice users from spamming space to shoot all the time
-      if(!playerShoot){
-        shoot(playerIndex, 'shooting')
+      if(!laser){
+        shoot(playerIndex, 'user')
       }
+    } else{
+      shoot(25, 'alien')
     }
   }
 
@@ -91,52 +94,49 @@ document.addEventListener('DOMContentLoaded', () => {
     div[playerIndex].classList.add('player')
   }
 
-  //CREATES A BULLET OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
-  function shoot(playerIndex,classname){
+  //moves the laser
+  function movelaser(){
+    //console.log(laser.shooter)
+    const previousShoot = laser.shottingIndex
+    if(laser.shooter === 'user')laser.moveUp()
+    else laser.moveDown()
+    if(laser.shottingIndex<0 || laser.shottingIndex>=(div.length-width)){
+      clearInterval(laser.shootingTimerId)
+      div[previousShoot].classList.remove(laser.class)
+      laser = undefined
+    }else{
+      div[previousShoot].classList.remove(laser.class)
+      div[laser.shottingIndex].classList.add(laser.class)
+    }
+    if(laser)checkHit(laser.shottingIndex, laser.class, laser.shootingTimerId)
+  }
+
+  //CREATES A laser OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
+  function shoot(playerIndex, shooter){
     shootingIndex = playerIndex
-    playerShoot = new Shooting(shootingIndex,width,0)
-    timerId = setInterval(()=> {
-      playerShoot.moveUp()
-      if(playerShoot.shottingIndex<0){
-        clearInterval(playerShoot.shootingTimerId)
-        div[playerShoot.shottingIndex+width].classList.remove(classname)
-        playerShoot = undefined
-      }else{
-        div[playerShoot.shottingIndex+width].classList.remove(classname)
-        div[playerShoot.shottingIndex].classList.add(classname)
-      }
-      if(playerShoot)checkHit(playerShoot.shottingIndex, classname, playerShoot.shootingTimerId)
-    }, 30)
-    if(playerShoot.shootingTimerId===0)playerShoot.shootingTimerId = timerId
+    laser = new Shooting(shootingIndex,width,0,shooter, 'shooting')
+    timerId = setInterval(movelaser, 30)
+    if(laser.shootingTimerId===0)laser.shootingTimerId = timerId
   }
 
   //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
   function alienCreate(index, className){
-    let startPosition = index
-    let endPosiition = startPosition+alien
     let points = 30
-    for(let i = 1; i<=alien*alienRow; i++) {
-      if(startPosition === endPosiition){
-        endPosiition+=width
-        startPosition= (startPosition-10)+20
-      }else{
-        startPosition++
-      }
-      if(startPosition === (index+40+1) || startPosition === (index+60+1) ){
-        points -= 10
-      }
-      const aliens = new Alien(startPosition , points)
+    for(let i = 0; i<alien*alienRow; i++) {
+      const aliens = new Alien(index , points)
       div[aliens.alienIndex].classList.add(className)
       arr.push(aliens)
+      index++
+      if((i+1) % alien ===0)index = (index+width)-(alien)
+      if((i+1)%(alien*Math.floor(alienRow/2))===0)points -= 10
     }
   }
-
 
   //function to check weahther to end the game
   function checkEnd(){
     if(arr.length === 0 ){
       //endGame()
-      //playerShoot = undefined
+      //laser = undefined
       clearInterval(gameTimerId)
       if(level<=7)delay -= 50
       level++
@@ -199,16 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   //collision dection  to check if the users hit the alien
-  function checkHit(playerShootindx, className, timerId){
+  function checkHit(laserindx, className, timerId){
     arr.forEach(elem =>{
-      if(!!elem.alienIndex && elem.alienIndex === playerShootindx){
+      if(!!elem.alienIndex && elem.alienIndex === laserindx && laser.shooter === 'user'){
         clearInterval(timerId)
-        div[playerShootindx].classList.remove(className)
-        div[playerShootindx].classList.remove('alien')
+        div[laserindx].classList.remove(className)
+        div[laserindx].classList.remove('alien')
         score += elem.points
-        arr = arr.filter(elem => elem.alienIndex !== playerShootindx)
+        arr = arr.filter(elem => elem.alienIndex !== laserindx)
         elem = undefined
-        playerShoot = undefined
+        laser = undefined
         userScore.innerText = score
       }
     })
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     div = document.querySelectorAll('.grid div')
     //caluclate the player position, which is the center of the bottom of the screen
-    playerIndex = (div.length-1)-(width/2)
+    playerIndex = (div.length-1)-Math.floor(width/2)
     document.addEventListener('keydown', handleKeydown)
     startGame()
   }
