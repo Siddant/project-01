@@ -8,6 +8,7 @@
 
 body {
   align-items: center;
+
 }
 
 .game{
@@ -42,29 +43,61 @@ body {
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
-  height: 100%;
   justify-content: center;
-  max-height:600px;
-  max-width: 600px;
+  height:600px;
+  width: 600px;
 }
 
 .grid div {
   flex-grow: 1;
   height: 5%;
   width: 5%;
-  border: 1px solid red;
 }
 
 .grid div.player {
-  background-color: green;
+  background-image: url("../assets/player.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
 }
+
+
 
 
 .grid div.shooting {
-  background-color: black;
+  background-image: url("../assets/missle.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(-90deg);
 }
 
 
-.grid div.alien {
-  background-color: blue;
+.grid div.alien1 {
+  background-image: url("../assets/enemy_1.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(180deg);
+}
+.grid div.alien2 {
+  background-image: url("../assets/enemy_2.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(180deg);
+}
+
+.grid div.alien3 {
+  background-image: url("../assets/enemy_3.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(180deg);
+}
+.grid div.motherShip {
+  background-image: url("../assets/mother_ship.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
 }

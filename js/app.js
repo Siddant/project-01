@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const h1 = document.querySelector('h1')
-  const width = 20
+  const width = 20, motherShipPoint = [50, 100, 300, 500]
   const grid = document.querySelector('.grid')
   const userScore = document.querySelector('#score')
   const userLevel = document.querySelector('#level')
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const alien = 11, alienRow = 5
   let playerIndex, timerId, shootingIndex, div, score = 0,
     laser, gameTimerId, move = 'right', changePosition =false,
-    level = 1,  delay = 500
+    level = 1,  delay = 500 //, motherShip
   //used to store the alien object and can be used in a global aspect
   let alienArray = []
   //let name
@@ -50,10 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   class Alien{
-    constructor(alienIndex, points, width) {
+    constructor(alienIndex, points, width, cssClass) {
       this.alienIndex = alienIndex
       this.points = points
       this.width = width
+      this.class = cssClass
     }
     moveDown(){
       this.alienIndex += this.width
@@ -127,15 +128,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
-  function alienCreate(index, className){
-    let points = 30
+  function alienCreate(index){
+    //'alien'
+    let points = 30, className = 'alien3'
     for(let i = 0; i<alien*alienRow; i++) {
-      const aliens = new Alien(index , points, width)
+      const aliens = new Alien(index , points, width, className)
       div[aliens.alienIndex].classList.add(className)
       alienArray.push(aliens)
       index++
       if((i+1) % alien ===0)index = (index+width)-(alien)
-      if((i+1)%(alien*Math.floor(alienRow/2))===0)points -= 10
+      if((i+1)%(alien*Math.floor(alienRow/2))===0){
+        points -= 10
+        className = 'alien' + (parseInt(className[className.length-1])-1)
+        console.log(parseInt(className[className.length-1]))
+      }
     }
   }
 
@@ -145,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(gameTimerId)
       if(level<=7)delay -= 50
       level++
-      document.addEventListener('keydown', handleKeydown)
       startGame()
     }else{
       alienArray.forEach((elem)=>{
@@ -163,20 +168,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.removeEventListener('keydown', handleKeydown)
     clearInterval(gameTimerId)
     clearInterval(timerId)
-    addScore('You',score)
+    //addScore('You',score)
     //name = prompt(`You manged to sorce ${score}`)
     //if(name) alert(`${name} score ${score}`)
   }
 
   //Fuction to store in the localStorage
-  function addScore(user,score){
-    const userScore ={
-      user: user,
-      score: score
-    }
-    highScoreArray.push(userScore)
-    localStorage.setItem('HighScore', JSON.stringify(highScoreArray))
-  }
+  // function addScore(user,score){
+  //   const userScore ={
+  //     user: user,
+  //     score: score
+  //   }
+  //   highScoreArray.push(userScore)
+  //   localStorage.setItem('HighScore', JSON.stringify(highScoreArray))
+  // }
   //Function to retrive it form  localStorage
   function displayScore(){
     if(highScoreArray.length===1)console.log(highScoreArray[0]['user'])
@@ -210,15 +215,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayAlienmove(){
     //removes the aliens
     div.forEach(divs => {
-      if(divs.classList.value === 'alien'){
-        divs.classList.remove('alien')
+      if(divs.classList.value === 'alien1' || divs.classList.value === 'alien2' || divs.classList.value === 'alien3'){
+        divs.classList.remove(divs.classList.value)
       }
-
     })
     //repaints the aliens
     alienArray.forEach(alien => {
-      div[alien.alienIndex].classList.add('alien')
+      div[alien.alienIndex].classList.add(alien.class)
     })
+  }
+
+  //function that get random number
+  function probailityOfHappening(probability){
+    const ran =Math.random()
+    if(ran < probability){
+      console.log(motherShipPoint[Math.floor((ran*100) % motherShipPoint.length)])
+    }
   }
 
   //collision dection  to check if the users hit the alien
@@ -227,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!!elem.alienIndex && elem.alienIndex === laserIndex && laser.shooter === 'user'){
         clearInterval(timerId)
         div[laserIndex].classList.remove(className)
-        div[laserIndex].classList.remove('alien')
+        div[laserIndex].classList.remove(elem.class)
         score += elem.points
         alienArray = alienArray.filter(elem => elem.alienIndex !== laserIndex)
         elem = undefined
@@ -253,14 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         checkAlienindex()
       }
       checkEnd()
+      //if(!motherShip)probailityOfHappening(0.2)
     }, delay)
   }
 
   function startGame(){
     userLevel.innerText = level
-    alienCreate(23,'alien')
-    div[playerIndex].classList.add('player')
-    //startTimer()
+    alienCreate(23)
+    startTimer()
   }
 
   //INITIALIZE THE GAME
@@ -272,8 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
     //caluclate the player position, which is the center of the bottom of the screen
     playerIndex = (div.length-1)-Math.floor(width/2)
     document.addEventListener('keydown', handleKeydown)
+    div[playerIndex].classList.add('player')
     startGame()
-
+    //removes the setitems form localStorage
     //console.log(localStorage.removeItem('HighScore'))//.remove('HighScore')
     displayScore()
 
