@@ -1,14 +1,95 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const width = 20, grid = document.querySelector('.grid'), alien = 11,
-    alienRow = 5, delay = 100
-  let playerIndex, previousIndex, timerId, div, gameTimerId, move = 'right',
-    bullet = 0, changeDirection = false, gameEnd = false, arr = []
-  //- Scoring and Lives
-  //3 Lives - Player
-  //10 points - last row
-  //20 points - 3rd and 4rth row
-  //30 points - 1st and 2nd row
-  //50, 100, 300 or 500 points - Mystery ship
+  const width =20
+  const grid = document.querySelector('.grid')
+  let div, playerIndex,shootingIndex, timerId
+  let alienArray = []
+
+  class Shooting {
+    constructor(playeIndex, width, timerId,shooter, cssClass) {
+      this.shootingIndex = playeIndex
+      this.width  =  width
+      this.timerId = timerId
+      this.shooter = shooter
+      this.class = cssClass
+    }
+    get shottingIndex() {
+      return this.shootingIndex
+    }
+    get previousShootingIndex(){
+      return this.shootingIndex + this.width
+    }
+
+    set shootingTimerId(minus) {
+      this.timerId = minus
+    }
+    get shootingTimerId() {
+      return this.timerId
+    }
+    moveUp(){
+      this.shootingIndex -= this.width
+    }
+    moveDown(){
+      this.shootingIndex += this.width
+    }
+  }
+
+
+
+  class Alien{
+    constructor(alienIndex, points, width, cssClass) {
+      this.alienIndex = alienIndex
+      this.points = points
+      this.width = width
+      this.class = cssClass
+    }
+    set index(index){
+      this.alienIndex = index
+    }
+    get index(){
+      return this.alienIndex
+    }
+    set directionMovemnt(direction){
+      this.movment = direction
+    }
+    get directionMovemnt(){
+      return this.movment
+    }
+    moveDown(){
+      this.alienIndex += this.width
+    }
+    moveLeft(){
+      this.alienIndex -= 1
+    }
+    moveRight(){
+      this.alienIndex += 1
+    }
+    checkEdge(){
+      return (this.alienIndex+1)%width === 0 || this.alienIndex%width === 0
+    }
+  }
+
+
+
+  //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
+  function alienCreate(index){
+  //'alien'
+    let points = 30, className = 'alien3'
+    for(let i = 0; i<11*5; i++) {
+      const aliens = new Alien(index , points, width, className)
+      div[aliens.alienIndex].classList.add(className)
+      alienArray.push(aliens)
+      index++
+      if((i+1) % 11 ===0)index = (index+width)-(11)
+      if((i+1)%(11*Math.floor(5/2))===0){
+        points -= 10
+        className = 'alien' + (parseInt(className[className.length-1])-1)
+      }
+    }
+  }
+
+
+
+
   //CREATE DIVS AND ADD DIVS
   function addElement() {
     const newDiv = document.createElement('div')
@@ -17,132 +98,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //HANDLE PLAYER EVENTS
   function handleKeydown(e){
-    previousIndex = playerIndex
+    //const previousIndex = playerIndex
     if(e.keyCode === 37 && playerIndex>(div.length-width)){
       playerIndex--
     }else if (e.keyCode === 39 && playerIndex<(div.length-1)){
       playerIndex++
     }else if (e.keyCode === 32){
       //restrice users from spamming space to shoot all the time
-      if(!bullet && !gameEnd){
-        shoot(playerIndex)
-      }
-
+      //if(!laser){
+      shoot(playerIndex, 'user', 'shooting')
+      //}
     }
-    movePlayer(playerIndex, previousIndex)
   }
 
-  //ADD AND REMOVE PLAYER DIRECTION
-  function movePlayer(playerIndex, previousIndex){
-    div[previousIndex].classList.remove('player')
-    div[playerIndex].classList.add('player')
+  //CREATES A laser OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
+  function shoot(playerIndex, shooter, className){
+    shootingIndex = playerIndex
+    const laser = new Shooting(shootingIndex,width,0,shooter, className)
+    movelaser(laser)
+    if(laser.shootingTimerId===0)laser.shootingTimerId = timerId
+    console.log(timerId)
   }
 
-  //CREATES A BULLET OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
-  function shoot(playerIndex){
-    bullet = playerIndex
-    timerId = setInterval(()=> {
-      bullet-=20
-      if(bullet<0){
-        clearInterval(timerId)
-        div[bullet+width].classList.remove('shooting')
-        bullet = undefined
-      }else{
-        div[bullet].classList.add('shooting')
-        div[bullet+width].classList.remove('shooting')
-      }
-      checkHit(bullet)
-    }, 60)
-  }
+  //
 
-  //paints the alien
-  function displayAlienmove(){
-    //reomves the aliens
-    div.forEach(divs => {
-      if(divs.classList.value === 'alien'){
-        divs.classList.remove('alien')
-      }
-    })
-    //repaints the aliens
-    arr.forEach(alien => {
-      div[alien].classList.add('alien')
-    })
+  //moves the laser
+  function movelaser(laser){
+    const previousShoot = laser.shottingIndex
+    const hit  = checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
+    console.log(laser.shottingIndex)
+
+    console.log(hit)
+    if(laser.shooter === 'user')laser.moveUp()
+    else laser.moveDown()
+    if(laser.shottingIndex<0 || laser.shottingIndex>div.length){
+    //   div[previousShoot].classList.remove(laser.class)
+    //   div[previousShoot].classList.remove(laser.class)
+    //   clearTimeout(laser.shootingTimerId)
+    //   laser = undefined
+    //   clearTimeout(laser.shootingTimerId)
+      clearInterval(timerId)
+    //}
+    // }else if(checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)){
+    //   console.log('here')
+    //   clearInterval(timerId)
+    //
+    }else{
+    //checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
+      div[previousShoot].classList.remove(laser.class)
+      div[laser.shottingIndex].classList.add(laser.class)
+      timerId = setTimeout(()=>movelaser(laser), 20)
+    }
+
+
+    //if(laser)checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
+    //if(laser && motherShip)checkHitagainstMotheShip(laser.shottingIndex, laser.class, laser.shootingTimerId)
   }
 
   //collision dection  to check if the users hit the alien
-  function checkHit(playerShootindx){
-    arr.forEach(elem =>{
-      if(!!elem && elem === playerShootindx){
-        clearInterval(timerId)
-        div[playerShootindx].classList.remove('shooting')
-        div[playerShootindx].classList.remove('alien')
-        bullet = undefined
-        arr = arr.filter(elem => elem !== playerShootindx)
+  function checkHit(laserIndex, className, timerId, laser){
+    alienArray.forEach(elem =>{
+      console.log(`laser index${laserIndex}`)
+      //console.log(`alien index ${elem.alienIndex}`)
+
+      if(!!elem.alienIndex && elem.alienIndex === laserIndex && laser === 'user'){
+        console.count('here')
+        return true
+      }else{
+        return false
       }
     })
   }
 
-  function alienCreate(index){
-    let startPosition = index
-    let endPosiition = startPosition+alien
-    for(let i = 0; i<alien*alienRow; i++) {
-      if(startPosition === endPosiition){
-        endPosiition+=width
-        startPosition= (startPosition-10)+20
-      }else{
-        startPosition++
-      }
-      div[startPosition].classList.add('alien')
-      arr.push(startPosition)
-    }
-  }
-
-  function moveAlien(move){
-    arr.forEach((elem, index)=>{
-      if(move === 'left'){
-        arr[index] -= 1
-      }else if(move === 'right'){
-        arr[index] += 1
-      }else{
-        arr[index] += 20
-      }
-    })
-    displayAlienmove()
-  }
-
-  function checkAlien(){
-    arr.forEach((elem, index)=>{
-      if((arr[index]+1)%width === 0 || arr[index]%width === 0){
-        changeDirection = true
-      }else if(arr[index]+1 >= div.length-(width*2)){
-        gameEnd =true
-        endGame()
-      }
-    })
-  }
-
-  function endGame(){
-    clearInterval(gameTimerId)
-    clearInterval(timerId)
-  }
-
-  // start the timer
-  function startTimer(){
-    gameTimerId = setInterval(()=> {
-      if(changeDirection){
-        moveAlien('down')
-        if(move ==='left'){
-          move ='right'
-        }else{
-          move ='left'
-        }
-        changeDirection = false
-      }else{
-        moveAlien(move)
-        checkAlien()
-      }
-    }, delay)
-  }
 
   //INITIALIZE THE GAME
   function init(){
@@ -150,12 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
       addElement()
     }
     div = document.querySelectorAll('.grid div')
-    document.addEventListener('keydown', handleKeydown)
-    //caluclate the player position, which is the center of the bottom of the screen
-    playerIndex = (div.length-1)-(width/2)
     alienCreate(23)
+
+    // //caluclate the player position, which is the center of the bottom of the screen
+    playerIndex = (div.length-1)-Math.floor(width/2)
+    document.addEventListener('keydown', handleKeydown)
     div[playerIndex].classList.add('player')
-    startTimer()
+    console.log(alienArray)
   }
 
   init()

@@ -149,3 +149,80 @@ input{
 .grid {
   display: flex;
 }
+
+
+
+
+
+
+
+
+
+
+.grid div.explosion{
+  background-image: url(../assets/explosion-sprite.png);
+  background-size: 500%;
+  background-position-x: 0;
+  background-position-y: 0;
+}
+
+.grid div.explosion[data-explosion="1"] {
+  background-position-x: 2.256% ;
+  background-position-y: 2.03%;
+}
+.grid div.explosion[data-explosion="2"] {
+  background-position-x: 33.256%;
+  background-position-y:  2.03%;
+}
+.grid div.explosion[data-explosion="3"] {
+  background-position-x: 65.256%;
+  background-position-y:  2.03%;
+}
+.grid div.explosion[data-explosion="4"] {
+  background-position-x: 95.256%;
+  background-position-y: 2.03%;
+}
+.grid div.explosion[data-explosion="5"] {
+  background-position-x: 0.256%;
+  background-position-y: 34.03%;
+}
+.grid div.explosion[data-explosion="6"] {
+  background-position-x: 33.256%;
+  background-position-y: 34.03%;
+}
+.grid div.explosion[data-explosion="7"] {
+  background-position-x: 66.256%;
+  background-position-y: 34.03%;
+}
+.grid div.explosion[data-explosion="8"] {
+  background-position-x: 96.256%;
+  background-position-y: 34.03%;
+}
+.grid div.explosion[data-explosion="9"] {
+  background-position-x: 33.256%;
+  background-position-y: 67.03%;
+}
+.grid div.explosion[data-explosion="10"] {
+  background-position-x: 65.256%;
+  background-position-y: 67.03%;
+}
+.grid div.explosion[data-explosion="11"] {
+  background-position-x: 94.256%;
+  background-position-y: 67.03%;
+}
+.grid div.explosion[data-explosion="12"] {
+  background-position-x: 1.256%;
+  background-position-y: 98.03%;
+}
+.grid div.explosion[data-explosion="13"] {
+  background-position-x: 34.256%;
+  background-position-y: 98.03%;
+}
+.grid div.explosion[data-explosion="14"] {
+  background-position-x: 57.256%;
+  background-position-y: 98.03%;
+}
+.grid div.explosion[data-explosion="15"] {
+  background-position-x: 2.256% ;
+  background-position-y: 3.03%;
+}

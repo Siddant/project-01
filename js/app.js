@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const width = 20//, motherShipPoint = [50, 100, 300, 500]
+  const width = 20, motherShipPoint = [50, 100, 300, 500]
   const grid = document.querySelector('.grid')
   const userScore = document.querySelector('#score')
   const gameOver  = document.querySelector('.gameEnd')
@@ -12,12 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const highScore  = document.querySelector('.highScore')
   const highScoreArray = JSON.parse(localStorage.getItem('HighScore')) || []
   const alien = 11, alienRow = 5
+  const userScored = gameOver.querySelector('h2 span')
 
   let playerIndex, timerId, shootingIndex, div, score = 0,
     gameTimerId, move = 'right', changePosition =false,
-    level = 1,  delay = 500//, motherShip
+    level = 1,  delay = 500, currentStep =1, motherShip,motherShipTimerId
   //used to store the alien object and can be used in a global aspect
-  let alienArray = [], lives = 3
+  let alienArray = [], lives = 3,  ran
   // delay = 500,
 
   //class
@@ -125,57 +126,87 @@ document.addEventListener('DOMContentLoaded', () => {
       div[laser.shottingIndex].classList.add(laser.class)
     }
     if(laser)checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
-    //if(laser && motherShip)checkHitagainstMotheShip(laser.shottingIndex, laser.class, laser.shootingTimerId)
-
-  //timerId = setTimeout(movelaser, 30)
   }
 
 
-  //collision dection  to check if the users hit the alien
   function checkHit(laserIndex, className, timerId, laser){
-    alienArray.forEach(elem =>{
-      if(!!elem.alienIndex && elem.alienIndex === laserIndex && laser === 'user'){
-        clearInterval(timerId)
-        div[laserIndex].classList.remove(className)
-        div[laserIndex].classList.remove(elem.class)
-        score += elem.points
-        alienArray = alienArray.filter(elem => elem.alienIndex !== laserIndex)
-        elem = undefined
-        laser = undefined
-        userScore.innerText = score
-      }
-    })
     if(laserIndex === playerIndex && laser !== 'user'){
-      console.log('hit')
       lives--
       userLives.innerText = lives
+    }else if(motherShip && laserIndex === motherShip.alienIndex && laser === 'user'){
+      clearTimeout(timerId)
+      clearTimeout(motherShipTimerId)
+      div[laserIndex].classList.remove(className)
+      div[motherShip.alienIndex].classList.remove(motherShip.class)
+      score += motherShip.points
+      motherShip = undefined
+      laser = undefined
+      userScore.innerText = score
+      div[laserIndex].classList.add('explosion')
+      explosionAnimation(laserIndex)
+    }else{
+      alienArray.forEach(elem =>{
+        if(!!elem.alienIndex && elem.alienIndex === laserIndex && laser === 'user'){
+          alienArray = alienArray.filter(elem => elem.alienIndex !== laserIndex)
+          //alienArray.slice(3)
+          console.log(alienArray)
+          div[laserIndex].classList.remove(elem.class)
+          score += elem.points
+          elem = undefined
+          clearTimeout(timerId)
+          div[laserIndex].classList.remove(className)
+          laser = undefined
+          userScore.innerText = score
+          div[laserIndex].classList.add('explosion')
+          explosionAnimation(laserIndex)
+        }
+      })
     }
-    div.forEach(divs => {
-      if(divs.classList.value === 'alienShooting shooting' || divs.classList.value === 'shooting alienShooting' ){
-        console.log('collision')
-      }
-    })
+
+    // div.forEach(divs => {
+    //   if(divs.classList.value === 'alienShooting shooting' || divs.classList.value === 'shooting alienShooting' ){
+    //     console.log(laser)
+    //     console.log(className)
+    //     console.log(divs.classList.value)
+    //
+    //     div[laserIndex].classList.remove(className)
+    //     clearInterval(timerId)
+    //     laser = undefined
+    //   }
+    // })
   }
 
   //CREATES A laser OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
   function shoot(playerIndex, shooter, className){
     shootingIndex = playerIndex
     const laser = new Shooting(shootingIndex,width,0,shooter, className)
-    //timerId = setInterval(()=>movelaser('abc'), 30)
     timerId = setInterval(()=> movelaser(laser), 30)
     if(laser.shootingTimerId===0)laser.shootingTimerId = timerId
   }
 
 
-  function alienShoots(){
-    const shootIndx = probailityOfHappening(0.2, alienArray)
-    //const shootIndx =1
-    if(shootIndx){
-      //div[shootIndx.alienIndex].style.backgroundColor= 'red'
-      shoot(shootIndx.alienIndex, 'alien','alienShooting')
+  //function explosion
+  function explosionAnimation(laserIndex){
+    let explosionId
+    if(currentStep >= 14){
+      currentStep = 0
+      div[laserIndex].classList.remove('explosion')
+      clearTimeout(explosionId)
+      div[laserIndex].removeAttribute('data-explosion')
+    } else{
+      div[laserIndex].dataset.explosion = currentStep
+      currentStep = currentStep + 1
+      explosionId = setTimeout(()=>explosionAnimation(laserIndex), 10)
     }
   }
 
+
+  function alienShoots(){
+    const shootIndx = probailityOfHappening(0.2, alienArray)
+    if(shootIndx){
+      shoot(shootIndx.alienIndex, 'alien','alienShooting')
+    }
+  }
 
 
   //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
@@ -195,19 +226,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+
   //function to check weahther to end the game
   function checkEnd(){
     if(alienArray.length === 0 ){
       clearInterval(gameTimerId)
       if(level<=7)delay -= 50
       level++
-      lives++
       startGame()
     }else if(lives <=0){
       delay = 500
       lives =3
       level = 1
       alienArray = []
+      move = 'right'
+      changePosition =false
       endGame()
     }else{
       alienArray.forEach((elem)=>{
@@ -216,6 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
           lives =3
           level =1
           alienArray = []
+          move = 'right'
+          changePosition =false
           endGame()
         }
       })
@@ -228,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(gameTimerId)
     grid.style.display='none'
     gameOver.style.display='flex'
-    const userScored = gameOver.querySelector('h2 span')
     userScored.innerText = score
     displayAlienmove()
   }
@@ -274,23 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     displayAlienmove()
   }
 
-  // function moveMotheShip(){
-  //   const previousIndex = motherShip.index
-  //   if(motherShip.directionMovemnt === 'left'){
-  //     motherShip.moveLeft()
-  //   }else if(motherShip.directionMovemnt === 'right'){
-  //     motherShip.moveRight()
-  //   } else{
-  //     motherShip.moveDown()
-  //   }
-  //   if(motherShip.checkEdge()){
-  //     div[motherShip.alienIndex].classList.remove(motherShip.class)
-  //     motherShip = undefined
-  //   }else{
-  //     movePlayer(motherShip.index, previousIndex, motherShip.class)
-  //   }
-  // }
-
 
   //check for wall collsion
   function checkAlienindex(){
@@ -317,43 +334,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //function that get random number
   function probailityOfHappening(probability,array){
-    const ran = Math.random()
+    ran = Math.random()
     if(ran < probability){
       return(array[Math.floor((ran*100) % array.length)])
     }
   }
 
-
-  // function checkHitagainstMotheShip(laserIndex, className, timerId){
-  //   if(!!motherShip.index && motherShip.index === laserIndex && !!motherShip){
-  //     clearInterval(timerId)
-  //     div[laserIndex].classList.remove(className)
-  //     div[motherShip.index].classList.remove(motherShip.class)
-  //     score += motherShip.points
-  //     motherShip = undefined
-  //     laser = undefined
-  //     userScore.innerText = score
-  //   }
-  // }
+  function moveBonusShip(){
+    const previousIndex = motherShip.alienIndex
+    if(motherShip.checkEdge()){
+      clearTimeout(motherShipTimerId)
+      div[motherShip.alienIndex].classList.remove(motherShip.class)
+      motherShip = undefined
+    }else {
+      if(motherShip.directionMovemnt === 'left'){
+        motherShip.moveLeft()
+      }else if(move=== 'right'){
+        motherShip.moveRight()
+      }
+      movePlayer(motherShip.alienIndex, previousIndex, motherShip.class)
+      motherShipTimerId = setTimeout(moveBonusShip, 100)
+    }
+  }
 
 
   //function for motherShip
-  // function bonusPoints(probaility){
-  //   const points  = probailityOfHappening(probaility)
-  //   const move = probailityOfHappening(0.5)
-  //   if(points){
-  //     motherShip = new Alien(0 , points, width, 'motherShip')
-  //     if(!move){
-  //       motherShip.directionMovemnt = 'left'
-  //       motherShip.index = 19
-  //     }else{
-  //       motherShip.directionMovemnt = 'right'
-  //       motherShip.index = 0
-  //     }
-  //     div[motherShip.index].classList.add('motherShip')
-  //     console.log(motherShip)
-  //   }
-  // }
+  function bonusPoints(probaility){
+    const points  = probailityOfHappening(probaility, motherShipPoint)
+    if(points){
+      motherShip = new Alien(0 , points, width, 'motherShip')
+      if(Math.floor(ran*100)%2 === 0){
+        motherShip.directionMovemnt = 'left'
+        motherShip.index = 19-1
+      }else{
+        motherShip.directionMovemnt = 'right'
+        motherShip.index = 0+1
+      }
+      div[motherShip.index].classList.add('motherShip')
+      moveBonusShip()
+    }
+  }
 
   // start the timer
   function startTimer(){
@@ -372,8 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       checkEnd()
       alienShoots()
-      //if(!motherShip)bonusPoints(0.1)
-      //else moveMotheShip()
+      if(!motherShip)bonusPoints(0.03)
     }, delay)
   }
 
@@ -381,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userLevel.innerText = level
     alienCreate(23)
     startTimer()
+    userScored.innerText = score
   }
 
 
@@ -401,11 +421,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }else if(options === 'Go Back' || options ===  'Cancel'){
       e.target.parentElement.parentElement.style.display='none'
       startMenu.style.display='flex'
+      score = 0
     }else{
       addScore(userName.value,score)
       e.target.parentElement.parentElement.style.display='none'
       startMenu.style.display='flex'
+      score = 0
     }
+    userScore.innerText = score
   }
 
   //INITIALIZE THE GAME
@@ -418,12 +441,11 @@ document.addEventListener('DOMContentLoaded', () => {
     playerIndex = (div.length-1)-Math.floor(width/2)
     document.addEventListener('keydown', handleKeydown)
     div[playerIndex].classList.add('player')
-    //removes the setitems form localStorage
-    startGame()
     //console.log(localStorage.removeItem('HighScore'))//.remove('HighScore')
     btns.forEach(elem => {
       elem.addEventListener('click', handleEvent)
     })
+    startGame()
   }
 
   init()
