@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       userLives.innerText = lives
     }
     div.forEach(divs => {
-      if(divs.classList.value === 'alienShooting' && divs.classList.value === 'shooting'){
+      if(divs.classList.value === 'alienShooting shooting' || divs.classList.value === 'shooting alienShooting' ){
         console.log('collision')
       }
     })
@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function alienShoots(){
     const shootIndx = probailityOfHappening(0.2, alienArray)
+    //const shootIndx =1
     if(shootIndx){
       //div[shootIndx.alienIndex].style.backgroundColor= 'red'
       shoot(shootIndx.alienIndex, 'alien','alienShooting')
