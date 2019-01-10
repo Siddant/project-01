@@ -4,6 +4,7 @@
   box-sizing: border-box;
   padding: 0;
   font-family: 'Press Start 2P', cursive;
+  color: white;
 }
 h1{
   font-size: 25px;
@@ -11,7 +12,10 @@ h1{
 
 body {
   align-items: center;
-
+  background-image: url("../assets/background-Images/start-menu.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
 }
 
 .game{
@@ -28,6 +32,7 @@ body {
   max-height: 30px;
   max-width: 600px;
   margin: 0;
+  display: none;
 }
 #score{
   color: green;
@@ -38,7 +43,6 @@ body {
   margin: 0;
   font-size: 25px;
   text-align: center;
-  /* display: none; */
 }
 
 .grid,.startMenu, .gameOver, .highScore, .instruction,.gameEnd{
@@ -110,7 +114,7 @@ body {
   background-size:cover;
 }
 .startMenu{
-  /* display: flex; */
+  display: flex;
 
 }
 .buttonholder{
@@ -130,7 +134,7 @@ body {
 button{
   height: 80px;
   width: 300px;
-  color: black;
+  color: white;
   font-size: 16px;
   background-color: Transparent;
   outline: none;
@@ -145,19 +149,6 @@ input{
   outline: none;
   margin: 0 auto;
 }
-
-.grid {
-  display: flex;
-}
-
-
-
-
-
-
-
-
-
 
 .grid div.explosion{
   background-image: url(../assets/explosion-sprite.png);

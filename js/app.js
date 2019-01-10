@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startMenu  = document.querySelector('.startMenu')
   const instruction  = document.querySelector('.instruction')
   const highScore  = document.querySelector('.highScore')
+  const detail = document.querySelector('.users-detail')
   const highScoreArray = JSON.parse(localStorage.getItem('HighScore')) || []
   const alien = 11, alienRow = 5
   const userScored = gameOver.querySelector('h2 span')
@@ -99,9 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
       playerIndex++
     }else if (e.keyCode === 32){
       //restrice users from spamming space to shoot all the time
-      //if(!laser){
       shoot(playerIndex, 'user', 'shooting')
-      //}
+
     }
     movePlayer(playerIndex, previousIndex, 'player')
   }
@@ -115,17 +115,20 @@ document.addEventListener('DOMContentLoaded', () => {
   //moves the laser
   function movelaser(laser){
     const previousShoot = laser.shottingIndex
-    if(laser.shooter === 'user')laser.moveUp()
-    else laser.moveDown()
+    if(laser.shooter === 'user'){
+      laser.moveUp()
+    }else{
+      laser.moveDown()
+    }
     if(laser.shottingIndex<0 || laser.shottingIndex>div.length){
-      clearInterval(laser.shootingTimerId)
       div[previousShoot].classList.remove(laser.class)
+      clearInterval(laser.shootingTimerId)
       laser = undefined
     }else{
       div[previousShoot].classList.remove(laser.class)
       div[laser.shottingIndex].classList.add(laser.class)
+      if(laser)checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
     }
-    if(laser)checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
   }
 
 
@@ -149,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!!elem.alienIndex && elem.alienIndex === laserIndex && laser === 'user'){
           alienArray = alienArray.filter(elem => elem.alienIndex !== laserIndex)
           //alienArray.slice(3)
-          console.log(alienArray)
           div[laserIndex].classList.remove(elem.class)
           score += elem.points
           elem = undefined
@@ -165,13 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // div.forEach(divs => {
     //   if(divs.classList.value === 'alienShooting shooting' || divs.classList.value === 'shooting alienShooting' ){
-    //     console.log(laser)
-    //     console.log(className)
-    //     console.log(divs.classList.value)
-    //
-    //     div[laserIndex].classList.remove(className)
-    //     clearInterval(timerId)
-    //     laser = undefined
     //   }
     // })
   }
@@ -233,22 +228,22 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(gameTimerId)
       if(level<=7)delay -= 50
       level++
+      document.body.style.backgroundImage = `url('assets/background-Images/${level%6}.jpg')`
       startGame()
     }else if(lives <=0){
-      delay = 500
-      lives =3
-      level = 1
       alienArray = []
+      lives =3
+      level =1
+      delay = 500
       move = 'right'
       changePosition =false
       endGame()
     }else{
       alienArray.forEach((elem)=>{
         if(elem.alienIndex+1 > div.length-(width*2)){
-          delay = 500
           lives =3
           level =1
-          alienArray = []
+          delay = 500
           move = 'right'
           changePosition =false
           endGame()
@@ -263,7 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(gameTimerId)
     grid.style.display='none'
     gameOver.style.display='flex'
+    document.body.style.backgroundImage = 'url(\'assets/background-Images/end.jpg\')'
     userScored.innerText = score
+    detail.style.display ='none'
+
     displayAlienmove()
   }
 
@@ -353,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         motherShip.moveRight()
       }
       movePlayer(motherShip.alienIndex, previousIndex, motherShip.class)
-      motherShipTimerId = setTimeout(moveBonusShip, 100)
+      motherShipTimerId = setTimeout(moveBonusShip, 200)
     }
   }
 
@@ -379,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startTimer(){
     gameTimerId = setInterval(()=> {
       if(changePosition){
-        moveAlien('down')
+        //moveAlien('down')
         if(move ==='left'){
           move ='right'
         }else{
@@ -387,12 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         changePosition = false
       }else{
-        moveAlien(move)
+        //moveAlien(move)
         checkAlienindex()
       }
       checkEnd()
-      alienShoots()
-      if(!motherShip)bonusPoints(0.03)
+      //alienShoots()
+      if(!motherShip)bonusPoints(0.05)
     }, delay)
   }
 
@@ -401,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     alienCreate(23)
     startTimer()
     userScored.innerText = score
+    console.log(alienArray)
   }
 
 
@@ -409,7 +408,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const options = e.target.textContent
     if(options === 'Start'){
       startMenu.style.display='none'
+      detail.style.display ='flex'
       grid.style.display='flex'
+      console.log(detail)
+      document.body.style.backgroundImage = `url('assets/background-Images/${level%6}.jpg')`
       startGame()
     }else if(options === 'Instruction'){
       startMenu.style.display='none'
@@ -422,11 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
       e.target.parentElement.parentElement.style.display='none'
       startMenu.style.display='flex'
       score = 0
+      document.body.style.backgroundImage = 'url(\'assets/background-Images/start-menu.jpg\')'
     }else{
       addScore(userName.value,score)
       e.target.parentElement.parentElement.style.display='none'
       startMenu.style.display='flex'
       score = 0
+      document.body.style.backgroundImage = 'url(\'assets/background-Images/start-menu.jpg\')'
     }
     userScore.innerText = score
   }
@@ -442,10 +446,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', handleKeydown)
     div[playerIndex].classList.add('player')
     //console.log(localStorage.removeItem('HighScore'))//.remove('HighScore')
+    //console.log(localStorage)
     btns.forEach(elem => {
       elem.addEventListener('click', handleEvent)
     })
-    startGame()
   }
 
   init()
