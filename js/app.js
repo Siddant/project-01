@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startTimer(){
     gameTimerId = setInterval(()=> {
       if(changePosition){
-        //moveAlien('down')
+        moveAlien('down')
         if(move ==='left'){
           move ='right'
         }else{
@@ -385,11 +385,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         changePosition = false
       }else{
-        //moveAlien(move)
+        moveAlien(move)
         checkAlienindex()
       }
       checkEnd()
-      //alienShoots()
+      alienShoots()
       if(!motherShip)bonusPoints(0.05)
     }, delay)
   }
