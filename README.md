@@ -1,7 +1,8 @@
 # WDI Project 1
 # General Assembly Project 1: Space Invaders
 
-![alt text](http://www.classicgaming.cc/classics/space-invaders/images/space-invaders-logo.png)
+![Image of Logo](assets/readme/space-invaders-logo.png)
+
 
 ## Time frame
 9 Days
@@ -24,3 +25,28 @@ Space Invaders is a classic arcade game from the 80s. The player aims to shoot a
 * Use the spacebar to shoot the invading aliens
 
 # Game Instructions
+1. The game start with  a start screen displaying the game title, start game button, instruction button and a High Score button
+
+![Screenshot](assets/readme/home-screen.png)
+
+2. By pressing the high score button, the game will display the current top 10 leaderboard
+
+![Screenshot](assets/readme/high-score.png)
+
+3. Upon pressing the start button, the game will begin. The game will display the player ship at the bottom of the screen and the enemy ships which is located at the top of the screen. The ship can be controlled by using the ← or → key. Space bar to shoot missile.
+
+![Screenshot](assets/readme/game.png)
+
+The game will also display you score points, the game current level and your health bar.
+
+
+4. By pressing the space bar the player has the ability to shoot the alien ship and shop the waves of alien from invading the earth.
+
+![Screenshot](assets/readme/missle-fire.png)
+
+
+5. Points are collected by shooting down the aliens ship, the points depends on the ship the player has shoot down.
+
+![Screenshot](assets/readme/points.png)
+
+The aliens ship at the 2 top row is worth 30 points each, the middle 2 row is worth 20 points each, the last row is worth 10 points and the mysterious ship that fly past the top

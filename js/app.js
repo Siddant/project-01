@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const highScore  = document.querySelector('.highScore')
   const detail = document.querySelector('.users-detail')
   const highScoreArray = JSON.parse(localStorage.getItem('HighScore')) || []
-  const alien = 11, alienRow = 5//11, alienRow = 5
+  const alien = 11, alienRow = 5
   const userScored = gameOver.querySelector('h2 span')
   const damage =  document.querySelector('#damageBar')
 
