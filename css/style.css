@@ -29,16 +29,16 @@ body {
 
 .users-detail{
   display: flex;
-  max-height: 30px;
-  max-width: 600px;
+  height: 60px;
+  width: 600px;
   margin: 0;
-  display: none;
+  display: none; 
 }
 #score{
   color: green;
 }
 .users-detail div{
-  height: 30px;
+  height: 77px;
   width: 350px;
   margin: 0;
   font-size: 25px;
@@ -61,27 +61,28 @@ body {
   flex-grow: 1;
   height: 5%;
   width: 5%;
+  /* border: 1px solid red; */
 }
 
 .grid div.player {
   background-image: url("../assets/player.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
 }
 
 .grid div.shooting {
   background-image: url("../assets/missle.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
   transform: rotate(-90deg);
 }
 .grid div.alienShooting {
   background-image: url("../assets/missle.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
   transform: rotate(90deg);
 }
 
@@ -89,14 +90,14 @@ body {
   background-image: url("../assets/enemy_1.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
   transform: rotate(180deg);
 }
 .grid div.alien2 {
   background-image: url("../assets/enemy_2.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
   transform: rotate(180deg);
 }
 
@@ -104,14 +105,14 @@ body {
   background-image: url("../assets/enemy_3.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
   transform: rotate(180deg);
 }
 .grid div.motherShip {
   background-image: url("../assets/mother_ship.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size:contain;
 }
 .startMenu{
   display: flex;
@@ -135,7 +136,7 @@ button{
   height: 80px;
   width: 300px;
   color: white;
-  font-size: 16px;
+  font-size: 20px;
   background-color: Transparent;
   outline: none;
   margin: 0 auto;
@@ -143,11 +144,12 @@ button{
 input{
   height: 80px;
   width: 300px;
-  color: black;
-  font-size: 16px;
+  color: white;
+  font-size: 20px;
   background-color: Transparent;
   outline: none;
   margin: 0 auto;
+  text-align: center;
 }
 
 .grid div.explosion{
@@ -216,4 +218,15 @@ input{
 .grid div.explosion[data-explosion="15"] {
   background-position-x: 2.256% ;
   background-position-y: 3.03%;
+}
+
+#myProgress {
+  width: 100%;
+  background-color: green;
+}
+
+#damageBar {
+  width: 0%;
+  height: 77px;
+  background-color: red;
 }
