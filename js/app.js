@@ -249,12 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(gameTimerId)
     grid.style.display='none'
     gameOver.style.display='flex'
-    document.body.style.backgroundImage = 'url(\'assets/background-Images/space.png\')'
     userScored.innerText = score
     detail.style.display ='none'
     alienArray = []
     level =1
-    delay = 500
+    delay = 750
     move = 'right'
     changePosition =false
     damage.style.width = 0
