@@ -16,15 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const userScored = gameOver.querySelector('h2 span')
   const damage =  document.querySelector('#damageBar')
 
-
   let playerIndex, timerId, shootingIndex, div, score = 0,
     gameTimerId, move = 'right', changePosition =false,
-    level = 1,  delay = 500, currentStep =1, motherShip,motherShipTimerId,
-    usersLaser
-
-  //used to store the alien object and can be used in a global aspect
-  let alienArray = [], lives = 5,  ran
-  // delay = 500,
+    level = 1,  delay = 750, currentStep =1, motherShip,motherShipTimerId,
+    usersLaser,alienArray = [], lives = 5,  ran
 
   //class
   class Shooting {
@@ -89,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //CREATE DIVS AND ADD DIVS
+  //CREATE DIV AND ADD DIVS
   function addElement() {
     const newDiv = document.createElement('div')
     grid.appendChild(newDiv)
@@ -136,8 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if(laser)checkHit(laser.shottingIndex, laser.class, laser.timerId, laser.shooter)
     }
     // }
-
-
   }
 
 
@@ -188,11 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if(usersLaser.shootingTimerId===0)usersLaser.shootingTimerId = timerId
     }else{
       const laser = new Shooting(shootingIndex,width,0,shooter, className)
-      timerId = setInterval(()=> movelaser(laser), 30)
+      timerId = setInterval(()=> movelaser(laser), 50)
       if(laser.shootingTimerId===0)laser.shootingTimerId = timerId
     }
   }
-
 
   //function explosion
   function explosionAnimation(laserIndex){
@@ -209,14 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-
   function alienShoots(){
     const shootIndx = probailityOfHappening(0.2, alienArray)
     if(shootIndx){
       shoot(shootIndx.alienIndex, 'alien','alienShooting')
     }
   }
-
 
   //CREATE THE ALIEN OBJECT USING THE ALIEN CLASS
   function alienCreate(index){
@@ -235,12 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-
   //function to check weahther to end the game
   function checkEnd(){
     if(alienArray.length === 0 ){
       clearInterval(gameTimerId)
-      if(level<=7)delay -= 50
+      if(level<=7)delay -= 70
       level++
       startGame()
     }else if(lives <=0){
@@ -255,8 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //userLives.innerText = lives
   }
 
-
-
   //ENDS THE GAME
   function endGame(){
     clearInterval(gameTimerId)
@@ -266,14 +253,12 @@ document.addEventListener('DOMContentLoaded', () => {
     userScored.innerText = score
     detail.style.display ='none'
     alienArray = []
-    lives =5
     level =1
     delay = 500
     move = 'right'
     changePosition =false
     damage.style.width = 0
     displayAlienmove()
-    //call a function that will clear all of the
   }
 
   //Fuction to store in the localStorage
@@ -302,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
     listOfScore.innerHTML = text
   }
 
-
   //move the alien index
   function moveAlien(move){
     alienArray.forEach(elem=>{
@@ -330,8 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayAlienmove(){
   //removes the aliens
     div.forEach(divs => {
-      if(divs.classList.value === 'alien1' || divs.classList.value === 'alien2' || divs.classList.value === 'alien3'){
-        divs.classList.remove(divs.classList.value)
+      if(divs.classList.contains('alien1') || divs.classList.contains( 'alien2') || divs.classList.contains( 'alien3')){
+        divs.classList.remove('alien1','alien2','alien3')
       }
     })
     //repaints the aliens
@@ -361,10 +345,9 @@ document.addEventListener('DOMContentLoaded', () => {
         motherShip.moveRight()
       }
       movePlayer(motherShip.alienIndex, previousIndex, motherShip.class)
-      motherShipTimerId = setTimeout(moveBonusShip, 200)
+      motherShipTimerId = setTimeout(moveBonusShip, 300)
     }
   }
-
 
   //function for motherShip
   function bonusPoints(probaility){
@@ -400,24 +383,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       checkEnd()
       alienShoots()
-      if(!motherShip)bonusPoints(0.05)
-      //if(usersLaser)console.log(usersLaser.shootingTimerId)
+      if(!motherShip)bonusPoints(0.03)
     }, delay)
   }
 
   function startGame(){
+    displayAlienmove()
     userLevel.innerText = level
     alienCreate(43)
-    //alienCreate(40)
     startTimer()
     userScored.innerText = score
   }
-
 
   //handles the click of the button from the users
   function handleEvent(e){
     const options = e.target.textContent
     if(options === 'Start'){
+      lives =5
       startMenu.style.display='none'
       detail.style.display ='flex'
       grid.style.display='flex'
@@ -460,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btns.forEach(elem => {
       elem.addEventListener('click', handleEvent)
     })
-  }
 
+  }
   init()
 })

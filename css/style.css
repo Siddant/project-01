@@ -32,7 +32,7 @@ body {
   height: 60px;
   width: 600px;
   margin: 0;
-  display: none; 
+  display: none;
 }
 #score{
   color: green;
@@ -218,6 +218,9 @@ input{
 .grid div.explosion[data-explosion="15"] {
   background-position-x: 2.256% ;
   background-position-y: 3.03%;
+}
+.grid{
+  cursor: none;
 }
 
 #myProgress {
