@@ -15,7 +15,7 @@ You can find a hosted version here: https://siddant.github.io/project-01/
 * HTML5
 * GitHub
 
-# Game Summary
+## Game Summary
 
 Space Invaders is a classic arcade game from the 80s. The player aims to shoot an invading alien armada, before it reaches the planet's surface using a mounted gun turret.
 
@@ -57,3 +57,30 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
  7. The main aim of the game is to get as many points as possible. The top 10 recorded high score will be displayed. This option is located at the start menu.
 
  ![Screenshot](assets/readme/high-score.png)
+
+## Process
+
+## Challenges
+
+The movement of large groups of aliens in formation similar to the original game was a huge issue. As each of the alien ship was an individual object and trying to move them individually caused a lot of ship to move out of synch or started overlapping on top of another. A lot of trial and error to the ship movement function had to be made in-order to make the movement look similar to the original game.
+
+The game involves a lot of different time based methods and functions which gets invoked at the same time, so it was a challenge to make sure that the game mechanics such as the collision detection work properly. Since the laser and the movement of the alien ship occur at different milliseconds, it was difficult to make sure that the correct ship was hit and was removed properly. Also the laser collision physics does not work properly if the aliens laser and the players laser were to be at the same gride then they will ignore each other and move through them. Therefore the game collision physics need to be worked on further.
+
+Time management of the project was a huge challenge, I started developing the game before making any kind of plans. This caused a lot of issue during the development process, as a lot of time was spent towards thinking about questing such as what the game should look like or what kind of features should the game have.
+
+## Wins
+By invested time in the stying the game, particularly adding few design such as adding background images made the game look and feel like a professional game.
+
+The use of class constructor function in the project was really helpful as it made the code reusable and manageable. The code can be refactored further allowing it to be reused in a different game project, typically a vertically scrolling shooter where the action is viewed from above and scrolls up the screen. Similar to the game below on the link:
+
+https://en.wikipedia.org/wiki/Category:Vertically_scrolling_shooters
+
+There were few bugs in the code that was difficult to fix particularly understanding the meaning behind them, so researching these bugs and finding the solution was a satisfying moment overall the project. Also I am pleased to see an improvement in my problem solving skills.
+
+## Future Features
+
+If I had more time then, I would like to make the game design more responsive. To make the game playable on any device such as mobile, table or larger screen. I would also like to included a game control plane which would appear for touchscreen device.
+
+I would have put more animation or sound to make the game come more alive. I would have also like to make the background image to move every few seconds to get the impression that the player is moving on the space.
+
+The movement of the alien ship could be improved, as they move similar to the original game (left to right and go down if they reach the wall). Their movement could be dynamically improved some ship moving right, some moving left some ship coming down and some ship spawning at random location. different types of waves of alien, different images for aliens ship as the player start progressing through out the level. Different type of object could be implemented such as an astroid or a satellite moving towards the player, which they has to avoid.
