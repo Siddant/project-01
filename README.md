@@ -74,7 +74,46 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
     }
   ```
 
-  
+  Each enemy were created using a class constructor function:
+  ```
+  class Alien{
+    constructor(alienIndex, points, width, cssClass) {
+      this.alienIndex = alienIndex
+      this.points = points
+      this.width = width
+      this.class = cssClass
+    }
+    set index(index){
+      this.alienIndex = index
+    }
+    get index(){
+      return this.alienIndex
+    }
+    set directionMovemnt(direction){
+      this.movment = direction
+    }
+    get directionMovemnt(){
+      return this.movment
+    }
+    moveDown(){
+      this.alienIndex += this.width
+    }
+    moveLeft(){
+      this.alienIndex -= 1
+    }
+    moveRight(){
+      this.alienIndex += 1
+    }
+    checkEdge(){
+      return (this.alienIndex+1)%width === 0 || this.alienIndex%width === 0
+    }
+  }
+  ```
+  After each of the alien object were created, they were pushed into an array called an alienArray. By having all of the aliens in an array displaying and moving them together using a foreach method was easier to do. Each of the alien object has a method ```checkEdge()```, which check whether any of them has reached the edge of the grid. Upon reaching grid edge a global variable will be changed which decide the direction of the alien ship movement.
+
+  When the users click the start button it triggers an event which will call the ```startTimer()``` function. Inside of function it contains a ```setInterval()``` function which will run every 0.75 seconds. This is the main timing interval as it controls the alien movement, check whether the game should end and also the controls the speed of the alien ship movement.
+
+
 ## Challenges
 
 The movement of large groups of aliens in formation similar to the original game was a huge issue. As each of the alien ship was an individual object and trying to move them individually caused a lot of ship to move out of synch or started overlapping on top of another. A lot of trial and error to the ship movement function had to be made in-order to make the movement look similar to the original game.
