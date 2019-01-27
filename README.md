@@ -73,7 +73,6 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
       this.alienIndex += 1
     }
   ```
-
   Each enemy were created using a class constructor function:
   ```
   class Alien{
@@ -111,9 +110,28 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
   ```
   After each of the alien object were created, they were pushed into an array called an alienArray. By having all of the aliens in an array displaying and moving them together using a foreach method was easier to do. Each of the alien object has a method ```checkEdge()```, which check whether any of them has reached the edge of the grid. Upon reaching grid edge a global variable will be changed which decide the direction of the alien ship movement.
 
-  When the users click the start button it triggers an event which will call the ```startTimer()``` function. Inside of function it contains a ```setInterval()``` function which will run every 0.75 seconds. This is the main timing interval as it controls the alien movement, check whether the game should end and also the controls the speed of the alien ship movement.
+  When the users click the start button it triggers an event which will call the ```startTimer()``` function. Inside of function it contains a ```setInterval()```, the interval id is set in a variable called gameTimerId. This is the main timing interval as it controls the alien movement, check whether the game should end and also the controls the speed of the alien ship movement which will run every 0.75 seconds this will start decreasing after clearing level.
 
+  Each laser are created using a laser class constructor function. To create the laser object when ever the user presses the space button or the alien can shoot, a function had to created which control which direction the laser can start shooting from .
 
+  ```
+  //CREATES A laser OBJECT THAT WILL BE TRIGGERED WHEN USER PRESS THE SPACE
+  function shoot(playerIndex, shooter, className){
+    shootingIndex = playerIndex
+    if(shooter === 'user'){
+      usersLaser = new Shooting(shootingIndex-width,width,0,shooter, className)
+      timerId = setInterval(()=> movelaser(usersLaser), 30)
+      if(usersLaser.shootingTimerId===0)usersLaser.shootingTimerId = timerId
+    }else{
+      const laser = new Shooting(shootingIndex,width,0,shooter, className)
+      timerId = setInterval(()=> movelaser(laser), 50)
+      if(laser.shootingTimerId===0)laser.shootingTimerId = timerId
+    }
+  }
+  ```
+  To get the laser to move up and down a individual ```setInterval()``` function had to be implemented, this interval function makes the laser be move independently. A function had to be created called ```checkHit()``` function, which will compare the index of the laser and check if it match the index of the any of the alien ship index. If there is a match then the alien object is removed from the alienArray using the ```filter``` method, also the it's class name is removed from the div.
+
+  
 ## Challenges
 
 The movement of large groups of aliens in formation similar to the original game was a huge issue. As each of the alien ship was an individual object and trying to move them individually caused a lot of ship to move out of synch or started overlapping on top of another. A lot of trial and error to the ship movement function had to be made in-order to make the movement look similar to the original game.
