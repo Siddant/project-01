@@ -129,14 +129,23 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
     }
   }
   ```
-  To get the laser to move up and down a individual ```setInterval()``` function had to be implemented, this interval function makes the laser be move independently. A function had to be created called ```checkHit()``` function, which will compare the index of the laser and check if it match the index of the any of the alien ship index. If there is a match then the alien object is removed from the alienArray using the ```filter``` method, also the it's class name is removed from the div.
+  To get the laser to move up and down a individual ```setInterval()``` function had to be implemented, this interval function makes the laser move independently.
 
-  
+  A function was also created called ```checkHit()``` which checks if a laser has hit the alien ship, by
+  looping through all the alines ship in alienArray to check if its location is the same laser index.If there is a match then the alien object is removed from the alienArray using the ```filter``` method, also the it's class name is removed from the div element. It works exactly the same when the user are hit by the alien laser, but instead the alien heath bar decreases.
+
+  To make the aliens to shoot randomly a function called ``` alienShoots()```  was implemented, by using the js method of ```Math.random()``` which will generate a random number. If the generated number is greater than 0.2 than a random alien from the array has the ability to shoot.
+
+
+  As the core functionality of the game worked properly a final feature were added which allow users to add and display scores. After the game ended and the user enter their name, the value of the score is stored in the localStorage. In the localStorage it's stored with key of HighScore, each of the score are saved as an object like ```{user: "<player name>", score: <player score>```. In the localStorage these object are stored with in an array.
+
+  To display the top 10 high score, it was implemented by retrieving the array from the localStorage. The array was first sorted using : ```const modified = highScoreArray.sort((a,b) => b['score']-a['score']).slice(0,10)```, this function sort the array from highest number to lowest number then using slice function it keeps the 10 elements and removes the rest in the array.
+
 ## Challenges
 
 The movement of large groups of aliens in formation similar to the original game was a huge issue. As each of the alien ship was an individual object and trying to move them individually caused a lot of ship to move out of synch or started overlapping on top of another. A lot of trial and error to the ship movement function had to be made in-order to make the movement look similar to the original game.
 
-The game involves a lot of different time based methods and functions which gets invoked at the same time, so it was a challenge to make sure that the game mechanics such as the collision detection work properly. Since the laser and the movement of the alien ship occur at different milliseconds, it was difficult to make sure that the correct ship was hit and was removed properly. Also the laser collision physics does not work properly if the aliens laser and the players laser were to be at the same gride then they will ignore each other and move through them. Therefore the game collision physics need to be worked on further.
+The game involves a lot of different time based methods and functions which gets invoked at the same time, so it was a challenge to make sure that the game mechanics such as the collision detection work properly. Since the laser and the movement of the alien ship occur at different milliseconds, it was difficult to make sure that the correct ship was hit and was removed properly. Also the laser collision physics does not work properly if the aliens laser and the players laser were to be at the same grid then they will ignore each other and move through them. Therefore the game collision physics need to be worked on further.
 
 Time management of the project was a huge challenge, I started developing the game before making any kind of plans. This caused a lot of issue during the development process, as a lot of time was spent towards thinking about questing such as what the game should look like or what kind of features should the game have.
 

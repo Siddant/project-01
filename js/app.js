@@ -273,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //Function to retrive it form  localStorage
   function displayScore(){
     //const highScore
+    console.log(JSON.parse(localStorage.getItem('HighScore')))
     const listOfScore = highScore.querySelector('.listOfScore')
     const modified = highScoreArray.sort((a,b) => b['score']-a['score']).slice(0,10)
     let text = ''
