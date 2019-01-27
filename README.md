@@ -59,7 +59,22 @@ Once the player has destroyed a wave of aliens, the game starts again. The aim i
  ![Screenshot](assets/readme/high-score.png)
 
 ## Process
+  This game is based on a grid layout, so the development process of the game started by creating a 20 X 20 grid. The main div called the grid contains 400 individual div element, each one of these divs were created using javascript so each of these divs can be manipulated over the DOM later. To display enemy ships or the player ship within the div element, an class had to be added called weather 'alien' or 'player'.
 
+  The game movement mechanics were achieved by simply removing the class from the current position and reapplying the class to the new position on the div element. The same mechanics applies to the game lasers. Referring to the code below to move left take the current position index -1, to move right  current position index +1 and to move up take the current position index + 20:
+  ```
+    moveDown(){
+      this.alienIndex += this.width
+    }
+    moveLeft(){
+      this.alienIndex -= 1
+    }
+    moveRight(){
+      this.alienIndex += 1
+    }
+  ```
+
+  
 ## Challenges
 
 The movement of large groups of aliens in formation similar to the original game was a huge issue. As each of the alien ship was an individual object and trying to move them individually caused a lot of ship to move out of synch or started overlapping on top of another. A lot of trial and error to the ship movement function had to be made in-order to make the movement look similar to the original game.
@@ -83,4 +98,7 @@ If I had more time then, I would like to make the game design more responsive. T
 
 I would have put more animation or sound to make the game come more alive. I would have also like to make the background image to move every few seconds to get the impression that the player is moving on the space.
 
-The movement of the alien ship could be improved, as they move similar to the original game (left to right and go down if they reach the wall). Their movement could be dynamically improved some ship moving right, some moving left some ship coming down and some ship spawning at random location. different types of waves of alien, different images for aliens ship as the player start progressing through out the level. Different type of object could be implemented such as an astroid or a satellite moving towards the player, which they has to avoid.
+The movement of the alien ship could be improved, as they move similar to the original game (left to right and go down if they reach the wall). Their movement could be dynamically improved some ship moving right, some moving left some ship coming down and some ship spawning at random location. Some of an additional implementation ideas are listed below:
+* Different types of waves of alien.
+* Different images for aliens ship as the player start progressing through out the level.
+* Different type of object could be implemented such as an astroid or a satellite moving towards the player, which they has to avoid.
